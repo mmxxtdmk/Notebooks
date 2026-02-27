@@ -13316,12 +13316,12 @@ div#notebook {
 <span class="w">  </span><span class="p">},</span>
 <span class="p">});</span>
 </pre></div>
-<p><strong>Pro tip</strong>: Use <code>ExpoHorizon.isHorizonDevice</code> to apply Quest-only styles at runtime.</p>
-<h3 id="2.-Performance-Best-Practices-(Expo-+-React-Native)">2. Performance Best Practices (Expo + React Native)<a class="anchor-link" href="#2.-Performance-Best-Practices-(Expo-+-React-Native)">¶</a></h3><div class="highlight"><pre><span></span><span class="c1">// 1. Enable React Compiler (biggest win on Quest)</span>
-<span class="nx">npx</span><span class="w"> </span><span class="nx">react</span><span class="o">-</span><span class="nx">compiler</span><span class="o">-</span><span class="nx">healthcheck</span><span class="kd">@latest</span>
-<span class="c1">// Then follow Expo guide: https://docs.expo.dev/guides/react-compiler/</span>
-
-<span class="c1">// 2. Offload everything with Reanimated worklets</span>
+<p>Pro tip: Use ExpoHorizon.isHorizonDevice to apply Quest-only styles at runtime.</p>
+<h3 id="2.-Performance-Best-Practices-(Expo-+-React-Native)">2. Performance Best Practices (Expo + React Native)<a class="anchor-link" href="#2.-Performance-Best-Practices-(Expo-+-React-Native)">¶</a></h3><div class="highlight"><pre><span></span><span class="c"># 1. Enable React Compiler (biggest single win on Quest)</span>
+<span class="n">npx</span> <span class="n">react-compiler-healthcheck</span><span class="nv">@latest</span>
+</pre></div>
+<p>Then follow the official Expo guide: <a href="https://docs.expo.dev/guides/react-compiler/">https://docs.expo.dev/guides/react-compiler/</a></p>
+<div class="highlight"><pre><span></span><span class="c1">// 2. Offload everything with Reanimated worklets</span>
 <span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useSharedValue</span><span class="p">,</span><span class="w"> </span><span class="nx">withSpring</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'react-native-reanimated'</span><span class="p">;</span>
 
 <span class="c1">// 3. Memoize aggressively</span>
@@ -13336,49 +13336,52 @@ div#notebook {
 <span class="w">  </span><span class="na">initialNumToRender</span><span class="o">=</span><span class="p">{</span><span class="mf">8</span><span class="p">}</span>
 <span class="p">/&gt;</span>
 </pre></div>
-<p><strong>Full checklist</strong>:</p>
+<p>Full checklist:</p>
 <ul>
-<li>Use <strong>Hermes</strong> (default in Expo)</li>
+<li>Use Hermes (default in Expo)</li>
 <li>New Architecture enabled (<code>newArchEnabled: true</code>)</li>
 <li>Static JS + ESM imports only (no <code>require</code>)</li>
-<li>TypeScript <code>strict: true</code></li>
+<li><code>TypeScript strict: true</code></li>
 <li>ESLint + Expo lint rules</li>
-<li><code>use</code> hook (React 19) instead of <code>useContext</code> when possible</li>
+<li><code>use hook</code> (React 19) instead of <code>useContext</code> when possible</li>
 </ul>
-<h3 id="3.-Horizon-OS-&amp;-Quest-3-Specific-Optimizations">3. Horizon OS &amp; Quest 3 Specific Optimizations<a class="anchor-link" href="#3.-Horizon-OS-&amp;-Quest-3-Specific-Optimizations">¶</a></h3><ul>
-<li><strong>Window defaults</strong> (already in your <code>expo-horizon-core</code> config):<div class="highlight"><pre><span></span><span class="nt">"defaultWidth"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1024dp"</span><span class="p">,</span>
-<span class="nt">"defaultHeight"</span><span class="p">:</span><span class="w"> </span><span class="s2">"640dp"</span>
+<h3 id="XR-Animation-Optimization-with-Reanimated">XR Animation Optimization with Reanimated<a class="anchor-link" href="#XR-Animation-Optimization-with-Reanimated">¶</a></h3><p>For buttery-smooth interactions in VR (e.g., gesture-based scaling or fading), install Reanimated:</p>
+<div class="highlight"><pre><span></span><span class="n">npx</span> <span class="n">expo</span> <span class="n">install</span> <span class="n">react-native-reanimated</span><span class="p">@~</span><span class="n">3</span><span class="p">.</span><span class="n">6</span><span class="p">.</span><span class="n">2</span>
 </pre></div>
-</li>
-<li><strong>Input</strong>: Controller &amp; hand tracking work automatically. Add haptic feedback with <code>expo-haptics</code>.</li>
-<li><strong>Forbidden APIs</strong>: No Google Play Services, no GPS (use alternatives). <code>expo-horizon-core</code> strips them automatically.</li>
-<li><strong>Passthrough / Camera</strong>: Use <code>react-native-vision-camera</code> sparingly – keep processing under 2 ms/frame.</li>
-<li><strong>Memory</strong>: Quest 3 has ~8 GB RAM but shared with OS. Profile early.</li>
-</ul>
-<h3 id="4.-Profiling-&amp;-Debugging-Workflow">4. Profiling &amp; Debugging Workflow<a class="anchor-link" href="#4.-Profiling-&amp;-Debugging-Workflow">¶</a></h3><ol>
-<li><strong>On-device</strong>:<ul>
-<li><code>npx expo start</code> → scan QR</li>
-<li>Shake Quest → <strong>Toggle Inspector</strong></li>
-</ul>
-</li>
-<li><strong>Chrome DevTools</strong> (JS thread):<ul>
-<li>Press <code>J</code> in Expo terminal</li>
-<li>Profiler → "Highlight updates when components render"</li>
-</ul>
-</li>
-<li><strong>Android Profiler</strong> (full native):<ul>
-<li>Connect Quest via USB</li>
-<li>Open <strong>Meta Quest Developer Hub</strong> → Profiling</li>
-<li>Or use <code>adb</code> + Android Studio Profiler</li>
-</ul>
-</li>
-<li><strong>Meta Tools</strong>:<ul>
-<li>RenderDoc Meta Fork (frame analysis)</li>
-<li>OVR Metrics Tool (FPS + ms/frame)</li>
-</ul>
-</li>
-</ol>
-<p><strong>Rule of thumb</strong>: If a function takes &gt;2 ms → optimize or move to worklet.</p>
+<p>Add to <code>babel.config.js</code>:</p>
+<div class="highlight"><pre><span></span><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="p">(</span><span class="nx">api</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">api</span><span class="p">.</span><span class="nx">cache</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">presets</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s1">'babel-preset-expo'</span><span class="p">],</span>
+<span class="w">    </span><span class="nx">plugins</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s1">'expo-router/babel'</span><span class="p">,</span><span class="w"> </span><span class="s1">'react-native-reanimated/plugin'</span><span class="p">],</span>
+<span class="w">  </span><span class="p">};</span>
+<span class="p">};</span>
+</pre></div>
+<p>Example in <code>App.tsx</code>: Use <code>useAnimatedStyle</code> for animated opacity on button press to minimize main-thread blocking in Quest's 90Hz+ rendering.</p>
+<p><strong>Senior React Native Prep Boost</strong><br/>
+Concept: Reanimated for performance-critical XR animations
+Why seniors must master it: It offloads animations to the UI thread, essential for maintaining 72-120Hz in VR to prevent motion sickness and ensure responsive apps.
+2-minute action I take today: In a local test app, implement a simple fade-in animation on a <code>View</code> using <code>useAnimatedStyle</code> and <code>withTiming</code>, then profile FPS via Chrome DevTools.</p>
+<h3 id="3.-Horizon-OS-&amp;-Quest-3-Specific-Optimizations">3. Horizon OS &amp; Quest 3 Specific Optimizations<a class="anchor-link" href="#3.-Horizon-OS-&amp;-Quest-3-Specific-Optimizations">¶</a></h3><p>Window defaults (already in your expo-horizon-core config):JSON"defaultWidth": "1024dp",
+"defaultHeight": "640dp"
+Input: Controller &amp; hand tracking work automatically. Add haptic feedback with expo-haptics.
+Forbidden APIs: No Google Play Services, no GPS (use alternatives). expo-horizon-core strips them automatically.
+Passthrough / Camera: Use react-native-vision-camera sparingly – keep processing under 2 ms/frame.
+Memory: Quest 3 has ~8 GB RAM but shared with OS. Profile early.</p>
+<h3 id="4.-Profiling-&amp;-Debugging-Workflow">4. Profiling &amp; Debugging Workflow<a class="anchor-link" href="#4.-Profiling-&amp;-Debugging-Workflow">¶</a></h3><p>On-device:
+npx expo start → scan QR
+Shake Quest → Toggle Inspector</p>
+<p>Chrome DevTools (JS thread):
+Press J in Expo terminal
+Profiler → "Highlight updates when components render"</p>
+<p>Android Profiler (full native):
+Connect Quest via USB
+Open Meta Quest Developer Hub → Profiling
+Or use adb + Android Studio Profiler</p>
+<p>Meta Tools:
+RenderDoc Meta Fork (frame analysis)
+OVR Metrics Tool (FPS + ms/frame)</p>
+<p>Rule of thumb: If a function takes &gt;2 ms → optimize or move to worklet.</p>
 <h3 id="5.-Build-&amp;-Store-Ready-Optimizations">5. Build &amp; Store-Ready Optimizations<a class="anchor-link" href="#5.-Build-&amp;-Store-Ready-Optimizations">¶</a></h3><div class="highlight"><pre><span></span><span class="c"># Production Quest build</span>
 <span class="n">npm</span> <span class="n">run</span> <span class="n">quest</span><span class="p">:</span><span class="n">release</span>
 
@@ -13392,7 +13395,8 @@ div#notebook {
 <span class="w">  </span><span class="nt">"buildFeatures"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"minify"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
-<h3 id="Quick-Wins-You-Can-Add-Today-(5-minutes)">Quick Wins You Can Add Today (5 minutes)<a class="anchor-link" href="#Quick-Wins-You-Can-Add-Today-(5-minutes)">¶</a></h3><div class="highlight"><pre><span></span><span class="c1">// In App.tsx</span>
+<p>Quick Wins You Can Add Today (5 minutes)</p>
+<div class="highlight"><pre><span></span><span class="c1">// In App.tsx</span>
 <span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useEffect</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'react'</span><span class="p">;</span>
 <span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">ExpoHorizon</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'expo-horizon-core'</span><span class="p">;</span>
 
