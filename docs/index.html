@@ -13239,6 +13239,49 @@ div#notebook {
 <span class="w">  </span><span class="nx">hint</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">fontSize</span><span class="o">:</span><span class="w"> </span><span class="kt">20</span><span class="p">,</span><span class="w"> </span><span class="nx">color</span><span class="o">:</span><span class="w"> </span><span class="s1">'#aaaaaa'</span><span class="p">,</span><span class="w"> </span><span class="nx">textAlign</span><span class="o">:</span><span class="w"> </span><span class="s1">'center'</span><span class="p">,</span><span class="w"> </span><span class="nx">marginTop</span><span class="o">:</span><span class="w"> </span><span class="kt">40</span><span class="w"> </span><span class="p">},</span>
 <span class="p">});</span>
 </pre></div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="9.-Basic-Unit-Testing-with-Jest">9. <strong>Basic Unit Testing with Jest</strong><a class="anchor-link" href="#9.-Basic-Unit-Testing-with-Jest">¶</a></h3><p>To ensure your Quest app remains reliable, set up basic unit tests using Jest, which is pre-configured in Expo projects. This is especially important for VR components where state changes from Horizon OS detection need verification.</p>
+<p>Create a new file <code>App.test.tsx</code> in the root directory with the following content:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">render</span><span class="p">,</span><span class="w"> </span><span class="nx">fireEvent</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'@testing-library/react-native'</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="nx">App</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'./App'</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">ExpoHorizon</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'expo-horizon-core'</span><span class="p">;</span>
+
+<span class="nx">jest</span><span class="p">.</span><span class="nx">mock</span><span class="p">(</span><span class="s1">'expo-horizon-core'</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">({</span>
+<span class="w">  </span><span class="nx">isHorizonDevice</span><span class="o">:</span><span class="w"> </span><span class="kt">jest.fn</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="kc">true</span><span class="p">),</span>
+<span class="p">}));</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s1">'App Component'</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">'renders correctly on Horizon device'</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">getByText</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">render</span><span class="p">(&lt;</span><span class="nt">App</span><span class="w"> </span><span class="p">/&gt;);</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">getByText</span><span class="p">(</span><span class="s1">'Welcome to QuestExplorer!'</span><span class="p">)).</span><span class="nx">toBeTruthy</span><span class="p">();</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">getByText</span><span class="p">(</span><span class="s1">'Running on Horizon OS: Yes'</span><span class="p">)).</span><span class="nx">toBeTruthy</span><span class="p">();</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">'increments counter on button press'</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">getByText</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">render</span><span class="p">(&lt;</span><span class="nt">App</span><span class="w"> </span><span class="p">/&gt;);</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">button</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">getByText</span><span class="p">(</span><span class="s1">'Press me'</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">fireEvent</span><span class="p">.</span><span class="nx">press</span><span class="p">(</span><span class="nx">button</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">getByText</span><span class="p">(</span><span class="s1">'Button pressed 1 times'</span><span class="p">)).</span><span class="nx">toBeTruthy</span><span class="p">();</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="%F0%9F%8E%89-Ready-to-build-the-future-of-VR!">🎉 Ready to build the future of VR!<a class="anchor-link" href="#%F0%9F%8E%89-Ready-to-build-the-future-of-VR!">¶</a></h2><p>Star this repo ⭐, fork it, and start building your own Quest 3 experiences with React Native today.</p>
 <p>Made with ❤️ for the React Native + Meta Horizon community.</p>
 <hr/>
@@ -13358,10 +13401,6 @@ div#notebook {
 <span class="p">};</span>
 </pre></div>
 <p>Example in <code>App.tsx</code>: Use <code>useAnimatedStyle</code> for animated opacity on button press to minimize main-thread blocking in Quest's 90Hz+ rendering.</p>
-<p><strong>Senior React Native Prep Boost</strong><br/>
-Concept: Reanimated for performance-critical XR animations
-Why seniors must master it: It offloads animations to the UI thread, essential for maintaining 72-120Hz in VR to prevent motion sickness and ensure responsive apps.
-2-minute action I take today: In a local test app, implement a simple fade-in animation on a <code>View</code> using <code>useAnimatedStyle</code> and <code>withTiming</code>, then profile FPS via Chrome DevTools.</p>
 <h3 id="3.-Horizon-OS-&amp;-Quest-3-Specific-Optimizations">3. Horizon OS &amp; Quest 3 Specific Optimizations<a class="anchor-link" href="#3.-Horizon-OS-&amp;-Quest-3-Specific-Optimizations">¶</a></h3><p>Window defaults (already in your expo-horizon-core config):JSON"defaultWidth": "1024dp",
 "defaultHeight": "640dp"
 Input: Controller &amp; hand tracking work automatically. Add haptic feedback with expo-haptics.
